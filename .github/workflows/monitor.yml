@@ -1,0 +1,53 @@
+name: Monitor de Milhas
+
+on:
+  schedule:
+    - cron: "0 11 * * *"  # 08:00 (horário de Brasília, UTC-3) todos os dias
+  workflow_dispatch: {}    # permite rodar manualmente pela interface do GitHub
+
+permissions:
+  contents: write
+
+jobs:
+  rodar-monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Instalar dependências
+        run: pip install -r requirements.txt
+
+      - name: Instalar Chromium (Playwright) e configurar Crawl4AI
+        run: |
+          playwright install --with-deps chromium
+          crawl4ai-setup
+
+      - name: Inicializar banco de dados
+        run: python database/db.py
+
+      - name: Rodar o monitor
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          EMAIL_REMETENTE: ${{ secrets.EMAIL_REMETENTE }}
+          EMAIL_SENHA_APP: ${{ secrets.EMAIL_SENHA_APP }}
+          EMAIL_DESTINATARIO: ${{ secrets.EMAIL_DESTINATARIO }}
+          CPM_MAXIMO_ALERTA: "20.0"
+          RSS_FEEDS: "https://passageirodeprimeira.com/feed/,https://www.melhoresdestinos.com.br/feed,https://pontospravoar.com/feed/"
+          DATABASE_PATH: "milhas_monitor.db"
+        run: python main.py
+
+      - name: Salvar histórico do banco de dados
+        run: |
+          git config user.name "Monitor de Milhas (bot)"
+          git config user.email "actions@github.com"
+          git add milhas_monitor.db
+          git diff --staged --quiet || git commit -m "Atualiza histórico de promoções"
+          git push

@@ -1,0 +1,6 @@
+crawl4ai
+playwright
+feedparser
+anthropic
+pydantic
+python-dotenv
