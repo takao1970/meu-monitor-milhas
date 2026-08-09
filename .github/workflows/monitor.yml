@@ -39,15 +39,21 @@ jobs:
           EMAIL_REMETENTE: ${{ secrets.EMAIL_REMETENTE }}
           EMAIL_SENHA_APP: ${{ secrets.EMAIL_SENHA_APP }}
           EMAIL_DESTINATARIO: ${{ secrets.EMAIL_DESTINATARIO }}
-          CPM_MAXIMO_ALERTA: "20.0"
-          RSS_FEEDS: "https://passageirodeprimeira.com/feed/,https://www.melhoresdestinos.com.br/feed,https://pontospravoar.com/feed/"
+          CPM_MAXIMO_ALERTA: ${{ vars.CPM_MAXIMO_ALERTA }}
+          RSS_FEEDS: ${{ vars.RSS_FEEDS }}
           DATABASE_PATH: "milhas_monitor.db"
         run: python main.py
 
-      - name: Salvar histórico do banco de dados
+      - name: Gerar painel (GitHub Pages)
+        env:
+          CPM_MAXIMO_ALERTA: ${{ vars.CPM_MAXIMO_ALERTA }}
+          DATABASE_PATH: "milhas_monitor.db"
+        run: python gerar_dashboard.py
+
+      - name: Salvar histórico e painel
         run: |
           git config user.name "Monitor de Milhas (bot)"
           git config user.email "actions@github.com"
-          git add milhas_monitor.db
-          git diff --staged --quiet || git commit -m "Atualiza histórico de promoções"
+          git add milhas_monitor.db docs/index.html
+          git diff --staged --quiet || git commit -m "Atualiza histórico de promoções e painel"
           git push

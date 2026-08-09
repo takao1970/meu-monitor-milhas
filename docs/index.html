@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitor de Milhas</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    --bg: #0f1115;
+    --card: #171a21;
+    --text: #e6e8eb;
+    --muted: #9aa1ac;
+    --border: #2a2e37;
+    --verde: #1f8a4c;
+    --verde-bg: #10301f;
+    --amarelo: #b8860b;
+    --amarelo-bg: #332a10;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #f5f6f8;
+      --card: #ffffff;
+      --text: #1a1d23;
+      --muted: #5c6270;
+      --border: #e2e4e9;
+      --verde-bg: #e6f4ea;
+      --amarelo-bg: #fbf1da;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px 16px 48px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; margin-bottom: 4px; }
+  .subtitulo { color: var(--muted); font-size: 0.9rem; margin-bottom: 20px; }
+  .resumo {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .cartao {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    flex: 1;
+    min-width: 140px;
+  }
+  .cartao .numero { font-size: 1.6rem; font-weight: 700; }
+  .cartao .rotulo { color: var(--muted); font-size: 0.8rem; }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border-radius: 10px; overflow: hidden; }
+  th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+  th { color: var(--muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.03em; }
+  tr:last-child td { border-bottom: none; }
+  a { color: inherit; text-decoration: underline; text-decoration-color: var(--muted); }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge-viavel { background: var(--verde-bg); color: var(--verde); }
+  .badge-alto { background: var(--amarelo-bg); color: var(--amarelo); }
+  .badge-neutro { background: transparent; color: var(--muted); }
+  .cpm { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .data { color: var(--muted); white-space: nowrap; font-size: 0.8rem; }
+  .vazio { text-align: center; padding: 40px; color: var(--muted); }
+  .rodape { margin-top: 20px; color: var(--muted); font-size: 0.78rem; text-align: center; }
+  @media (max-width: 640px) {
+    table, thead, tbody, th, td, tr { display: block; }
+    thead { display: none; }
+    tr { border-bottom: 1px solid var(--border); padding: 12px; }
+    td { border-bottom: none; padding: 4px 0; }
+    td::before { content: attr(data-rotulo); display: block; color: var(--muted); font-size: 0.72rem; text-transform: uppercase; }
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <h1>📊 Monitor de Milhas</h1>
+    <p class="subtitulo">Atualizado em 09/08/2026 00:28 UTC · teto de CPM: R$ 20.00</p>
+
+    <div class="resumo">
+      <div class="cartao"><div class="numero">38</div><div class="rotulo">promoções encontradas</div></div>
+      <div class="cartao"><div class="numero">0</div><div class="rotulo">viáveis agora</div></div>
+    </div>
+
+    
+    <table>
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>CPM</th>
+          <th>Promoção</th>
+          <th>De → Para</th>
+          <th>Bônus Máx</th>
+          <th>Descoberto em</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Itália lança Caminho de São Francisco e impulsiona turismo religioso</td>
+      <td data-rotulo="De → Para">— → —</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 23:07 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Alerta de passagens PPV! LATAM Pass tem emissões nacionais a partir de 3 mil milhas</td>
+      <td data-rotulo="De → Para">_ → LATAM Pass</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 23:07 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Assine o Sam&#x27;s Club com 30% de desconto e ganhe até 4.500 pontos KMV</td>
+      <td data-rotulo="De → Para">Sam&#x27;s Club → KMV</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 23:07 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Grupo de emissões PPV: as melhores oportunidades de resgate na palma da sua mão</td>
+      <td data-rotulo="De → Para">Programas de Fidelidade (múltiplos) → Emissões aéreas</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 23:07 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Transferência Bonificada de Pontos - Azul Fidelidade para Inter Loop</td>
+      <td data-rotulo="De → Para">Azul Fidelidade → Inter Loop</td>
+      <td data-rotulo="Bônus Máx">120%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 23:07 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">8.8! Ganhe até 16 milhas por real nas ofertas do Shopping Smiles</td>
+      <td data-rotulo="De → Para">Smiles → Smiles</td>
+      <td data-rotulo="Bônus Máx">2%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 23:06 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">8.8! Até 379 mil pontos na assinatura ou upgrade do Clube Livelo Top</td>
+      <td data-rotulo="De → Para">Livelo → Clube Livelo Top</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 23:06 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">8.8! Ganhe até 17 pontos Livelo por real em diversas lojas parceiras</td>
+      <td data-rotulo="De → Para">/ → Livelo</td>
+      <td data-rotulo="Bônus Máx">17%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 23:06 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">8.8! Uau CAIXA oferece 8 pontos por real gasto na Decolar</td>
+      <td data-rotulo="De → Para">Decolar → Uau CAIXA</td>
+      <td data-rotulo="Bônus Máx">700%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 23:06 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Confira hotéis em São Paulo, Belo Horizonte e Rio de Janeiro com diárias a partir de R$ 134</td>
+      <td data-rotulo="De → Para">Livelo → ALL Accor</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 23:06 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Dicas de viagem – O mapa completo das sedes da Copa Feminina 2027</td>
+      <td data-rotulo="De → Para">— → —</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 23:05 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">O que está bombando na Amazon? Veja os produtos mais vendidos</td>
+      <td data-rotulo="De → Para">— → —</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 23:05 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Destinos tranquilos no Brasil para quem quer fugir das multidões</td>
+      <td data-rotulo="De → Para">— → —</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 23:05 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Tem vídeo novo no YouTube: você viaja para curtir ou para postar nas redes sociais?</td>
+      <td data-rotulo="De → Para">— → —</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 23:05 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Azul reajusta os valores do despacho de bagagem em voos no Brasil</td>
+      <td data-rotulo="De → Para">— → —</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 23:05 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Aproveite! Passagens pelo Brasil na LATAM a partir de R$ 183</td>
+      <td data-rotulo="De → Para">Não informado → LATAM Pass</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:12 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Passagens pelo Brasil a partir de 2.600 pontos + taxas</td>
+      <td data-rotulo="De → Para">N/A → N/A</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:11 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Ganhe 3 meses de assinatura e 500 Avios ao vincular sua conta Iberia Club com o Rappi</td>
+      <td data-rotulo="De → Para">Rappi → Iberia Club</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:11 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">8.8 Latam! Data dupla tem passagens aéreas nacionais a partir de R$ 390 ida e volta</td>
+      <td data-rotulo="De → Para">N/A → N/A</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:10 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Últimos dias! Bradesco e Amex sorteiam 5 milhões de pontos Livelo</td>
+      <td data-rotulo="De → Para">Bradesco → Livelo</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:10 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Peça seu cartão GOL Smiles BB e ganhe 3 meses de anuidade grátis</td>
+      <td data-rotulo="De → Para">Banco do Brasil → Smiles</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:10 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">American Airlines restringirá upgrade gratuito para clientes com status</td>
+      <td data-rotulo="De → Para">Não informado → Não informado</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:10 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">LATAM oferece trechos para diversos destinos a partir de R$ 183 ou 3.513 milhas + taxas</td>
+      <td data-rotulo="De → Para">Não informado → LATAM Pass</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:10 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">8/8 na Livelo! Ganhe até 17 pontos por real gasto na Mondaine, Natura e mais</td>
+      <td data-rotulo="De → Para">Livelo → Livelo</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:09 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Azul volta a operar voos regulares entre Porto Alegre e Montevidéu</td>
+      <td data-rotulo="De → Para">N/A → N/A</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:09 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Só hoje! Assine o Clube Livelo Top e receba até 379 mil pontos</td>
+      <td data-rotulo="De → Para">Livelo → Livelo</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:09 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">8/8! Mercado Livre oferece cupom de até 25% de desconto em compras</td>
+      <td data-rotulo="De → Para">N/A → N/A</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:09 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Livelo oferece 20% de desconto em voos para Recife</td>
+      <td data-rotulo="De → Para">Livelo → Livelo</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:09 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Planejando a próxima viagem? Veja sugestões de resgate para Frankfurt, Munique e muito mais</td>
+      <td data-rotulo="De → Para">Não informado → Não informado</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:08 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">5 sugestões de voos partir de 14.300 milhas Smiles</td>
+      <td data-rotulo="De → Para">Não informado → Smiles</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:08 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">8/8 - Amazon oferece cupom de R$ 100 de desconto</td>
+      <td data-rotulo="De → Para">N/A → N/A</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:08 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">GOL tem passagens aéreas nacionais a partir de R$ 198 por trecho</td>
+      <td data-rotulo="De → Para">— → —</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:08 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Shopping Smiles oferece até 16 milhas por real gasto na Polishop e Pontofrio</td>
+      <td data-rotulo="De → Para">Polishop e Pontofrio → Smiles</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:08 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Abra sua Conta Global Revolut e ganhe 3.000 pontos que podem virar Avios</td>
+      <td data-rotulo="De → Para">Revolut → Avios</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:07 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Peça seu cartão Azul Itaú com até 40.000 pontos na adesão e até 5,25 milhas por dólar gasto</td>
+      <td data-rotulo="De → Para">Itaú → Azul Fidelidade</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:07 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Rock in Rio! Hotéis com até 39% de desconto + cupom de 10% off</td>
+      <td data-rotulo="De → Para">Hoteis.com → Hoteis.com</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:07 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Últimos dias! ARQ oferece até USDc 1.000 de cashback com a menor taxa de conversão do mercado</td>
+      <td data-rotulo="De → Para">N/A → N/A</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:07 UTC</td>
+    </tr>
+
+    <tr class="linha-neutro">
+      <td class="status" data-rotulo="Status"><span class="badge badge-neutro">— sem custo de compra</span></td>
+      <td class="cpm" data-rotulo="CPM">—</td>
+      <td data-rotulo="Promoção">Ganhe até 7 mil pontos ao abrir a sua conta Azul Fidelidade</td>
+      <td data-rotulo="De → Para">Bancos parceiros → Azul Fidelidade</td>
+      <td data-rotulo="Bônus Máx">0%</td>
+      <td class="data" data-rotulo="Descoberto em">08/08/2026 22:06 UTC</td>
+    </tr>
+      </tbody>
+    </table>
+
+    <p class="rodape">Gerado automaticamente pelo meu-monitor-milhas a cada execução.</p>
+  </div>
+</body>
+</html>

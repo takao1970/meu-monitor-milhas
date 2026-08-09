@@ -12,6 +12,7 @@ SCHEMA = """
 CREATE TABLE IF NOT EXISTS promocoes (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     hash_url TEXT UNIQUE NOT NULL,
+    url TEXT,
     titulo TEXT NOT NULL,
     programa_origem TEXT,
     programa_destino TEXT,
@@ -21,6 +22,8 @@ CREATE TABLE IF NOT EXISTS promocoes (
     enviado_telegram BOOLEAN NOT NULL DEFAULT 0
 );
 """
+
+MIGRACAO_ADICIONAR_URL = "ALTER TABLE promocoes ADD COLUMN url TEXT;"
 
 
 @contextmanager
@@ -37,6 +40,9 @@ def get_connection():
 def init_db():
     with get_connection() as conn:
         conn.execute(SCHEMA)
+        colunas = [row["name"] for row in conn.execute("PRAGMA table_info(promocoes)")]
+        if "url" not in colunas:
+            conn.execute(MIGRACAO_ADICIONAR_URL)
 
 
 def gerar_hash_url(url: str) -> str:
@@ -66,12 +72,13 @@ def salvar_promocao(
         cursor = conn.execute(
             """
             INSERT INTO promocoes (
-                hash_url, titulo, programa_origem, programa_destino,
+                hash_url, url, titulo, programa_origem, programa_destino,
                 bonus_max, cpm_calculado, data_descoberta, enviado_telegram
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 hash_url,
+                url,
                 titulo,
                 programa_origem,
                 programa_destino,
@@ -90,6 +97,22 @@ def marcar_como_enviado(promocao_id: int):
             "UPDATE promocoes SET enviado_telegram = 1 WHERE id = ?",
             (promocao_id,),
         )
+
+
+def listar_promocoes():
+    """Retorna todas as promoções, com as viáveis (CPM calculado) primeiro
+    em ordem crescente de CPM, seguidas das demais por data mais recente."""
+    with get_connection() as conn:
+        rows = conn.execute(
+            """
+            SELECT * FROM promocoes
+            ORDER BY
+                CASE WHEN cpm_calculado IS NULL THEN 1 ELSE 0 END,
+                cpm_calculado ASC,
+                data_descoberta DESC
+            """
+        ).fetchall()
+        return [dict(row) for row in rows]
 
 
 if __name__ == "__main__":
