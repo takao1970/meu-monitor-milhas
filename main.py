@@ -5,14 +5,14 @@ from config import CPM_MAXIMO_ALERTA
 from database.db import init_db, promocao_ja_processada, salvar_promocao, marcar_como_enviado
 from core.rss_fetcher import buscar_novos_posts
 from core.web_crawler import extrair_markdown
-from core.llm_parser import parsear_regulamento
+from core.llm_parser import eh_relevante, parsear_regulamento
 from core.cpm_calculator import avaliar_promocao
 from notifier.email_notifier import enviar_alerta, formatar_mensagem
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
 
-INTERVALO_ENTRE_POSTS_SEGUNDOS = 5  # evita estourar o rate limit gratuito do Gemini
+INTERVALO_ENTRE_POSTS_SEGUNDOS = 2  # cortesia com os servidores dos portais rastreados
 
 
 def processar_post(url: str, titulo_post: str):
@@ -20,9 +20,13 @@ def processar_post(url: str, titulo_post: str):
         logger.info("Já processado, pulando: %s", url)
         return
 
-    time.sleep(INTERVALO_ENTRE_POSTS_SEGUNDOS)
-
     try:
+        if not eh_relevante(titulo_post):
+            salvar_promocao(url=url, titulo=titulo_post)
+            logger.info("Não é sobre transferência bonificada, pulando: %s", titulo_post)
+            return
+
+        time.sleep(INTERVALO_ENTRE_POSTS_SEGUNDOS)
         markdown = extrair_markdown(url)
         regulamento = parsear_regulamento(markdown)
         resultado_cpm = avaliar_promocao(regulamento, CPM_MAXIMO_ALERTA)

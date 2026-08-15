@@ -30,6 +30,34 @@ Se um campo não estiver explícito no texto, retorne null (ou 0.0 quando o camp
 numérico obrigatório e não houver bônus aplicável). Não invente informações."""
 
 
+class RelevanciaTitulo(BaseModel):
+    relevante: bool
+
+
+PROMPT_CLASSIFICACAO = """Classifique se o título de post abaixo é sobre uma \
+promoção de TRANSFERÊNCIA BONIFICADA DE PONTOS/MILHAS entre programas de \
+fidelidade (ex: "Livelo transfira para Smiles com 100% de bônus", "Azul \
+Fidelidade para Inter Loop"). NÃO é relevante: notícias gerais, venda de \
+passagem aérea, cupom de loja, "ganhe pontos comprando em X", dicas de \
+viagem, hotéis, vídeos, produtos. Responda apenas com base no título."""
+
+
+def eh_relevante(titulo: str) -> bool:
+    """Classificação barata (só o título) para decidir se vale a pena rastrear
+    a página inteira e gastar tokens com a extração completa."""
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+
+    resposta = client.messages.parse(
+        model=CLAUDE_MODEL,
+        max_tokens=16,
+        system=PROMPT_CLASSIFICACAO,
+        messages=[{"role": "user", "content": titulo}],
+        output_format=RelevanciaTitulo,
+    )
+
+    return resposta.parsed_output.relevante
+
+
 def parsear_regulamento(markdown_conteudo: str) -> PromocaoRegulamento:
     """Envia o Markdown da promoção à Claude e retorna os dados estruturados
     validados via Pydantic."""

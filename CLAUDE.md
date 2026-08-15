@@ -4,9 +4,23 @@ Monitor pessoal e privado de promoções de milhas: coleta feeds RSS, faz scrapi
 do regulamento, extrai dados estruturados via LLM, calcula CPM e alerta por e-mail.
 
 ## Pipeline (main.py)
-`rss_fetcher` (posts 24h) → `web_crawler` (URL → markdown) → `llm_parser`
-(markdown → `PromocaoRegulamento`) → `cpm_calculator` (CPM x teto) → `db`
-(dedup por hash da URL) → `email_notifier` (alerta se viável).
+`rss_fetcher` (posts 24h) → `db` (dedup por hash da URL) → `llm_parser.eh_relevante`
+(classificação barata, só o título — descarta ~90% dos posts sem gastar com
+crawler/extração completa) → `web_crawler` (URL → markdown filtrado) →
+`llm_parser.parsear_regulamento` (markdown → `PromocaoRegulamento`) →
+`cpm_calculator` (CPM x teto) → `email_notifier` (alerta se viável).
+
+## Otimizações de custo (importante manter ao editar)
+- `web_crawler.py` usa `PruningContentFilter` + `remove_overlay_elements` +
+  `remove_consent_popups` — corta página crua de ~29k para ~7k caracteres
+  (remove menu/cookies/anúncios antes de mandar pra LLM).
+- `llm_parser.eh_relevante(titulo)` roda ANTES do crawler — classificação de
+  ~30 tokens que evita rastrear+extrair posts que não são sobre transferência
+  bonificada (a maioria do RSS). Só ~10% dos posts passam pro crawler completo.
+- `MAX_CARACTERES_MARKDOWN` em `llm_parser.py` é rede de segurança contra
+  páginas fora do padrão que escapem do filtro do crawler.
+- Não remover essas camadas sem repor a economia de outra forma — sem elas o
+  custo de API sobe ~10-15x (medido: ~US$1/dia sem filtros → poucos centavos/dia com).
 
 ## Módulos
 - `config.py` — lê `.env`. Fonte única de configuração; não hardcode valores alhures.
