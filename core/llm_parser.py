@@ -8,6 +8,8 @@ from pydantic import BaseModel
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from config import ANTHROPIC_API_KEY, CLAUDE_MODEL
 
+MAX_CARACTERES_MARKDOWN = 12000  # rede de segurança contra páginas fora do padrão
+
 
 class PromocaoRegulamento(BaseModel):
     titulo: str
@@ -32,6 +34,7 @@ def parsear_regulamento(markdown_conteudo: str) -> PromocaoRegulamento:
     """Envia o Markdown da promoção à Claude e retorna os dados estruturados
     validados via Pydantic."""
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    markdown_conteudo = markdown_conteudo[:MAX_CARACTERES_MARKDOWN]
 
     resposta = client.messages.parse(
         model=CLAUDE_MODEL,
